@@ -1,1 +1,1 @@
-Example repo for migration
+This is an example repo for migration.
