@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.modal_image
+    - field.storage.block_content.field_video
+id: block_content.modal_image.field_video
+field_name: field_video
+entity_type: block_content
+bundle: modal_image
+label: 'Video ID#'
+description: 'Only add ID number at the end of the URL: example: zfDiHitBkY0'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

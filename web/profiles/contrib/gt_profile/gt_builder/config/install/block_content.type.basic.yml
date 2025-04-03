@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: nI6BnW6ERZjZGBpmjbc5ER3QYZejCe5b5zYhSV5J7LM
+id: basic
+label: 'Basic block'
+revision: 0
+description: 'A basic block contains a title and a body.'

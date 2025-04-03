@@ -1,0 +1,262 @@
+<?php
+
+use Drupal\taxonomy\Entity\Term;
+
+
+function gt_communicator_install() {
+  /**
+   * The basics
+   */
+
+  // First, do everything in standard profile.
+  include_once DRUPAL_ROOT . '/core/profiles/standard/standard.install';
+  standard_install();
+
+  // Set the GT 4.x Theme as the Default Theme and the Claro Theme as the Admin Theme
+  $themes = \Drupal::service('config.factory')->getEditable('system.theme');
+  $themes->set('default', 'gt');
+  $themes->set('admin', 'claro');
+  $themes->save();
+
+  // Set User Creation Option to Administrators Only
+  \Drupal::service('config.factory')
+    ->getEditable('user.settings')
+    ->set('register', 'admin_only')
+    ->save();
+
+  // Disable Personal Contact Forms
+  \Drupal::service('config.factory')
+    ->getEditable('contact.settings')
+    ->set('user_default_enabled', 'false')
+    ->save();
+
+  /**
+   * Install a bunch of modules
+   */
+
+  // TODO: This needs some sort of error handling; Can't just not install things
+  // that are required.ß
+
+  $modules = [
+    'admin_toolbar',
+    'admin_toolbar_tools',
+    'block_region_permissions',
+    'datetime_range',
+    'faqfield',
+    'field_formatter_class',
+    'field_group',
+    'hg_reader',
+    'jquery_ui_accordion',
+    'layout_builder',
+    'layout_builder_modal',
+    'layout_builder_restrictions',
+    'layout_discovery',
+    'pathauto',
+    'telephone',
+    'video_embed_field',
+    'views_accordion',
+    'gt_tools',
+    'social_media_links',
+    'metatag',
+  ];
+
+  // Installing Modules
+  foreach ($modules as $module) {
+    $module_path = DRUPAL_ROOT;
+    if (file_exists($module_path. '/modules/contrib/'. $module. '/'. $module. '.module') || file_exists($module_path. '/core/modules/'. $module. '/'. $module. '.module')) {
+      try{
+        if($module == 'metatag') {
+          \Drupal::service('module_installer')->install(['metatag', 'metatag_open_graph', 'metatag_twitter_cards']);
+        } elseif ($module == 'hg_reader') {
+          \Drupal::state()->set('hg_reader_bypass_redirect', TRUE);
+          \Drupal::service('module_installer')->install([$module]);
+        } else {
+          \Drupal::service('module_installer')->install([$module]);
+        }
+      } catch (\Exception $e) {
+        \Drupal::logger("gt_communicator_install")->error("Error installing module " . $module . ": " . $e->getMessage());
+      }
+    }
+  }
+  /**
+   * Install a bunch of configs that rely on the above modules.
+   */
+
+  // Post-install configuration setup
+  $config_dir = DRUPAL_ROOT . '/profiles/contrib/gt_profile/gt_communicator/config/post-install';
+  $special_dir = DRUPAL_ROOT . '/profiles/contrib/gt_profile/gt_communicator/config/special';
+
+  // Post-install configuration
+  $files = glob($config_dir . '/*.yml');
+  $source = new \Drupal\Core\Config\FileStorage($config_dir);
+  $config_storage = \Drupal::service('config.storage');
+  foreach ($files as $file) {
+    $components = explode('/', $file);
+    $config_name = str_replace('.yml', '', end($components));
+    $config_storage->write($config_name, $source->read($config_name));
+  }
+
+  /**
+   * Set up fields that need storage
+   */
+
+  $source = new \Drupal\Core\Config\FileStorage($special_dir);
+  $storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+
+  $storage->create($source->read('field.storage.node.layout_builder__layout'))
+    ->save();
+  $storage->create($source->read('field.storage.block_content.field_accordion_field'))
+    ->save();
+  $storage->create($source->read('field.storage.block_content.field_height'))
+    ->save();
+  $storage->create($source->read('field.storage.block_content.field_percentage'))
+    ->save();
+  $storage->create($source->read('field.storage.block_content.field_quote'))
+    ->save();
+  $storage->create($source->read('field.storage.block_content.field_video_url'))
+    ->save();
+
+  /**
+   * This has to be handled differently because apparently field storage for
+   * text lists is formatted differently than for the widgets. Stupid but true.
+   */
+  $snowflakes = [
+    'field.storage.block_content.field_image_style',
+    'field.field.block_content.image_with_copy.field_image_style',
+    'field.storage.block_content.field_link_styling',
+    'field.field.block_content.custom_links.field_link_styling',
+    'field.storage.block_content.field_size',
+    'field.field.block_content.spacer.field_size',
+    'field.storage.block_content.field_text_alignment',
+    'field.field.block_content.call_to_action.field_text_alignment',
+    'field.field.block_content.image_with_copy.field_text_alignment',
+  ];
+  foreach ($snowflakes as $config_name) {
+    $config_record = $source->read($config_name);
+
+    $entity_type = \Drupal::service('config.manager')
+      ->getEntityTypeIdByName($config_name);
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config_record);
+    $entity->save();
+  }
+
+  /* No recollection what this is all about... */
+  $source = new \Drupal\Core\Config\FileStorage($config_dir);
+  \Drupal::service('config.storage')
+    ->write('core.entity_view_display.node.page.default', $source->read('core.entity_view_display.node.page.default'));
+
+  /**
+   * Here we go. Time to install some taxonomy terms.
+   */
+
+  /* COLORS */
+  $color_terms = [
+    'Black' => [
+      'field_machine_name' => [
+        0 => ['value' => 'black'],
+      ],
+    ],
+    'Blue' => [
+      'field_machine_name' => [
+        0 => ['value' => 'blue'],
+      ],
+    ],
+    'Gold' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gold'],
+      ],
+    ],
+    'Transparent' => [
+      'field_machine_name' => [
+        0 => ['value' => 'Transparent'],
+      ],
+    ],
+    'Warm gray' => [
+      'field_machine_name' => [
+        0 => ['value' => 'warm-gray'],
+      ],
+    ],
+    'White' => [
+      'field_machine_name' => [
+        0 => ['value' => 'white'],
+      ],
+    ],
+  ];
+  foreach ($color_terms as $name => $fields) {
+    $termData = [
+      'name' => $name,
+      'weight' => 0,
+      'vid' => 'gt_colors',
+    ];
+    $termData += $fields;
+    try{
+      Term::create($termData)->save();
+    } catch (\Exception $e) {
+      error_log("Error creating color term: $e");
+    }
+  }
+
+  /* COLOR THEMES */
+  $theme_terms = [
+    'GT Light' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-light'],
+      ],
+      'field_background_color' => 6,
+      'field_button_color' => 1,
+      'field_text_background_color' => 6,
+      'field_text_color' => 1,
+    ],
+    'GT Dark' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-dark'],
+      ],
+      'field_background_color' => 1,
+      'field_button_color' => 3,
+      'field_text_background_color' => 1,
+      'field_text_color' => 6,
+    ],
+    'GT Neutral' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-neutral'],
+      ],
+      'field_background_color' => 5,
+      'field_button_color' => 1,
+      'field_text_background_color' => 5,
+      'field_text_color' => 1,
+    ],
+    'GT Blue' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-blue'],
+      ],
+      'field_background_color' => 2,
+      'field_button_color' => 3,
+      'field_text_background_color' => 6,
+      'field_text_color' => 6,
+    ],
+    'GT Gold' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-gold'],
+      ],
+      'field_background_color' => 3,
+      'field_button_color' => 1,
+      'field_text_background_color' => 3,
+      'field_text_color' => 1,
+    ],
+  ];
+  foreach ($theme_terms as $name => $fields) {
+    $termData = [
+      'name' => $name,
+      'weight' => 0,
+      'vid' => 'style',
+    ];
+    $termData += $fields;
+    try{
+      Term::create($termData)->save();
+    } catch (\Exception $e) {
+      error_log("Error creating color term: $e");
+    }
+  }
+}

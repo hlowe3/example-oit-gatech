@@ -1,0 +1,71 @@
+name: Georgia Tech Communicator Profile
+type: profile
+description: 'The whole kit and caboodle'
+dependencies:
+  - admin_toolbar
+  - automated_cron
+  - back_to_top
+  - better_exposed_filters
+  - block
+  - block_content
+  - block_region_permissions
+  - cas
+  - ckeditor5
+  - config
+  - contact
+  - contextual
+  - datetime
+  - datetime_range
+  - dblog
+  - devel
+  - dynamic_page_cache
+  - editor
+  - faqfield
+  - field_formatter_class
+  - field_ui
+  - file
+  - focal_point
+  - google_tag
+  - gt_tools
+  - help
+  - history
+  - image
+  - image_field_caption
+  - layout_builder
+  - layout_builder_iframe_modal
+  - layout_builder_restrictions
+  - layout_discovery
+  - link
+  - masquerade
+  - media
+  - metatag
+  - metatag_open_graph
+  - metatag_twitter_cards
+  - metatag_verification
+  - menu_link_content
+  - menu_ui
+  - module_filter
+  - node
+  - options
+  - page_cache
+  - path
+  - pathauto
+  - pathologic
+  - redirect
+  - search
+  - shortcut
+  - social_media_links
+  - taxonomy
+  - telephone
+  - token
+  - toolbar
+  - views
+  - views_ui
+  - xmlsitemap
+
+themes:
+  - gt
+  - claro
+version: '4.1.0'
+project status url: https://comm.gatech.edu/release_histories/gt_profile/4.x
+core_version_requirement: ^9.2 || ^10

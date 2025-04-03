@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'GT Colors'
+vid: gt_colors
+description: 'A list of offical Georgia Tech colors'
+weight: 0

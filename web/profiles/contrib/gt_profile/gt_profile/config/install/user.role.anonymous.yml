@@ -1,0 +1,13 @@
+uuid: 16950d6d-05dd-4e77-8baf-c073352cc5de
+langcode: en
+status: true
+dependencies:
+  module:
+    - filter
+id: anonymous
+label: 'Anonymous user'
+weight: 0
+is_admin: false
+permissions:
+  - 'access content'
+  - 'use text format restricted_html'

@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: Style
+vid: style
+description: 'Style sets for element forms'
+weight: 0

@@ -1,0 +1,156 @@
+<?php
+
+use Drupal\taxonomy\Entity\Term;
+
+function gt_developer_install() {
+  /**
+   * The basics
+   */
+
+  // Set the GT 4.x Theme as the Default Theme and the Claro Theme as the Admin Theme
+  $themes = \Drupal::service('config.factory')->getEditable('system.theme');
+  $themes->set('default', 'gt');
+  $themes->set('admin', 'claro');
+  $themes->save();
+
+  // Set User Creation Option to Administrators Only
+  \Drupal::service('config.factory')
+    ->getEditable('user.settings')
+    ->set('register', 'admin_only')
+    ->save();
+
+  // Disable Personal Contact Forms
+  \Drupal::service('config.factory')
+    ->getEditable('contact.settings')
+    ->set('user_default_enabled', 'false')
+    ->save();
+
+    $modules = [
+      'gt_tools',
+    ];
+
+    foreach ($modules as $module) {
+      $module_path = DRUPAL_ROOT . '/modules/contrib/'; 
+      try {
+        if (file_exists($module_path. $module. '/'. $module. '.module') ) {
+          \Drupal::service('module_installer')->install([$module]);
+        }
+      } catch (\Exception $e) {
+        \Drupal::logger("gt_developer_install")->error("Error installing module " . $module . ": " . $e->getMessage());
+      }
+    }
+
+  /**
+   * Here we go. Time to install some taxonomy terms.
+   */
+
+  /* COLORS */
+  $color_terms = [
+    'Black' => [
+      'field_machine_name' => [
+        0 => ['value' => 'black'],
+      ],
+    ],
+    'Blue' => [
+      'field_machine_name' => [
+        0 => ['value' => 'blue'],
+      ],
+    ],
+    'Gold' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gold'],
+      ],
+    ],
+    'Transparent' => [
+      'field_machine_name' => [
+        0 => ['value' => 'Transparent'],
+      ],
+    ],
+    'Warm gray' => [
+      'field_machine_name' => [
+        0 => ['value' => 'warm-gray'],
+      ],
+    ],
+    'White' => [
+      'field_machine_name' => [
+        0 => ['value' => 'white'],
+      ],
+    ],
+  ];
+
+  foreach ($color_terms as $name => $fields) {
+    $termData = [
+      'name' => $name,
+      'weight' => 0,
+      'vid' => 'gt_colors',
+    ];
+    $termData += $fields;
+    try{
+      Term::create($termData)->save();
+    } catch (\Exception $e) {
+      error_log("Error creating color term: $e");
+    }
+  }
+  /* COLOR THEMES */
+  $theme_terms = [
+    'GT Light' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-light'],
+      ],
+      'field_background_color' => 6,
+      'field_button_color' => 1,
+      'field_text_background_color' => 6,
+      'field_text_color' => 1,
+    ],
+    'GT Dark' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-dark'],
+      ],
+      'field_background_color' => 1,
+      'field_button_color' => 3,
+      'field_text_background_color' => 1,
+      'field_text_color' => 6,
+    ],
+    'GT Neutral' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-neutral'],
+      ],
+      'field_background_color' => 5,
+      'field_button_color' => 1,
+      'field_text_background_color' => 5,
+      'field_text_color' => 1,
+    ],
+    'GT Blue' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-blue'],
+      ],
+      'field_background_color' => 2,
+      'field_button_color' => 3,
+      'field_text_background_color' => 6,
+      'field_text_color' => 6,
+    ],
+    'GT Gold' => [
+      'field_machine_name' => [
+        0 => ['value' => 'gt-gold'],
+      ],
+      'field_background_color' => 3,
+      'field_button_color' => 1,
+      'field_text_background_color' => 3,
+      'field_text_color' => 1,
+    ],
+  ];
+
+  foreach ($theme_terms as $name => $fields) {
+    $termData = [
+      'name' => $name,
+      'weight' => 0,
+      'vid' => 'style',
+    ];
+    $termData += $fields;
+    try{
+      Term::create($termData)->save();
+    } catch (\Exception $e) {
+      error_log("Error creating color term: $e");
+    }
+  }
+}

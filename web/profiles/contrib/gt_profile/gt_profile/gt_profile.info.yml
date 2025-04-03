@@ -1,0 +1,42 @@
+name: Georgia Tech Profile
+type: profile
+description: 'Install with commonly used features pre-configured.'
+dependencies:
+  - automated_cron
+  - block
+  - block_content
+  - block_region_permissions
+  - breakpoint
+  - cas
+  - ckeditor5
+  - comment
+  - config
+  - contextual
+  - datetime
+  - dblog
+  - dynamic_page_cache
+  - editor
+  - field_ui
+  - file
+  - help
+  - history
+  - image
+  - link
+  - menu_link_content
+  - menu_ui
+  - node
+  - options
+  - page_cache
+  - path
+  - shortcut
+  - social_media_links
+  - taxonomy
+  - toolbar
+  - views
+  - views_ui
+themes:
+  - gt
+  - claro
+version: '4.0.7'
+project status url: https://comm.gatech.edu/release_histories/gt_profile/4.x
+core_version_requirement: ^9.2 || ^10

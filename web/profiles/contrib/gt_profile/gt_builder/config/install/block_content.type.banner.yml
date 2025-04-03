@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: banner
+label: Banner
+revision: 1
+description: 'Hero image with text for use in the Full Width regions and/or with Layout Builder (restricted width).'

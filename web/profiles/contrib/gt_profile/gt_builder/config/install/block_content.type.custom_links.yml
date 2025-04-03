@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: zO4Tf_JLpZmcrsD3CrlUerhCJRv5-Eb2Y57aiEvQmcM
+id: custom_links
+label: 'Custom Links'
+revision: 1
+description: 'Add buttons with multiple styles'

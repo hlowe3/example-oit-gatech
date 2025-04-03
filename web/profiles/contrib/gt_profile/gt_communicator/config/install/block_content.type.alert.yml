@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: alert
+label: Alert
+revision: 1
+description: 'Provide contextual feedback messages for typical user actions with the handful of available and flexible alert messages.'

@@ -1,0 +1,14 @@
+name: Georgia Tech Developer Profile
+type: profile
+description: 'Install with minimal features pre-configured. This is for advanced developers'
+dependencies:
+  - cas
+  - gt_tools
+  - taxonomy
+  - toolbar
+themes:
+  - gt
+  - claro
+version: '4.1.0'
+project status url: https://comm.gatech.edu/release_histories/gt_profile/4.x
+core_version_requirement: ^9.2 || ^10

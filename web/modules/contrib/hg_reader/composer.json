@@ -1,0 +1,13 @@
+{
+    "name": "gt/hg_reader",
+    "description": "Provides the hg_reader module of course.",
+    "type": "drupal-module",
+    "require": {
+      "drupal/twig_field_value": "^2.0",
+      "drupal/twig_tweak": "^3.1"
+    },
+    "suggest": {
+        "drupal/pathauto": "Automate path creation for entities.",
+        "drupal/metatag": "Provides metatag data for social media and other porpoises."
+    }
+}

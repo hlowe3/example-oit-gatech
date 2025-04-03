@@ -1,0 +1,8 @@
+name: GT Tools Search
+description: Search functionality for GT sites. Search is optional. Uninstall if you are going to use a different search module
+package: GT
+type: module
+core_version_requirement: ^9 | ^10
+project: "GT Tools"
+dependencies:
+  - search

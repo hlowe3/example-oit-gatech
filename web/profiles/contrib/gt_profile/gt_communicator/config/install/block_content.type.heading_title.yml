@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sm6bsPgrVL6fH6rnd9kENf7ASvefYAxXn0HCdfj0EDw
+id: heading_title
+label: 'Heading Title'
+revision: 0
+description: 'Add a title heading.'
